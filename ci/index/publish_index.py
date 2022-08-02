@@ -20,8 +20,8 @@ def upload_file(client, src, dst):
     }
 
     name, ext = os.path.splitext(os.path.basename(src))
-    if not ext in types.keys():
-        raise Exception("Unrecognized extension on file '{}'".format(src))
+    if ext not in types:
+        raise Exception(f"Unrecognized extension on file '{src}'")
 
     client.upload_file(
         Filename=src,
@@ -33,8 +33,8 @@ def upload_file(client, src, dst):
 
 client = boto3.client('s3', region_name='us-west-2')
 
-upload_file(client, INDEX_FILE, PREFIX + '/' + INDEX_FILE)
+upload_file(client, INDEX_FILE, f'{PREFIX}/{INDEX_FILE}')
 for root, dirs, files in os.walk(ASSETS_FOLDER):
-   for name in files:
-      path = os.path.join(root, name)
-      upload_file(client, path, PREFIX + '/' + path)
+    for name in files:
+        path = os.path.join(root, name)
+        upload_file(client, path, f'{PREFIX}/{path}')

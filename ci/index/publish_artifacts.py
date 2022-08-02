@@ -11,7 +11,7 @@ from publish_index import OSS_BUCKET, EE_BUCKET
 from publish_index import PREFIX, PREFIX_RELEASE
 from publish_index import ASSETS_FOLDER
 
-ARTIFACTS_FILE = ASSETS_FOLDER + "/artifacts.json"
+ARTIFACTS_FILE = f"{ASSETS_FOLDER}/artifacts.json"
 
 
 def splitpath(path):
@@ -67,4 +67,4 @@ with open(ARTIFACTS_FILE, mode='w+') as f:
     contents["artifacts"] = natural_sort(contents["artifacts"])
     f.write(json.dumps(contents))
 
-upload_file(client, ARTIFACTS_FILE, PREFIX + '/' + ARTIFACTS_FILE)
+upload_file(client, ARTIFACTS_FILE, f'{PREFIX}/{ARTIFACTS_FILE}')

@@ -92,7 +92,7 @@ def test_plugin_install_invalid_test(default_cluster):
     filename = os.path.splitext(os.path.basename(__file__))[0]
     code, out, err = exec_cmd(['dcos', 'plugin', 'add', __file__])
     assert code == 1
-    assert err == 'Error: {} has no commands\n'.format(filename)
+    assert err == f'Error: {filename} has no commands\n'
     assert out == ''
 
 

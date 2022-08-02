@@ -28,7 +28,7 @@ artifacts = [
 
 for artifact in artifacts:
     src = {'Bucket': bucket, 'Key': artifact.format(tag_name)}
-    dst = artifact.format("dcos-" + dcos_version)
+    dst = artifact.format(f"dcos-{dcos_version}")
 
     s3_client.copy(src, bucket, dst)
 
@@ -36,26 +36,35 @@ slack_token = os.environ.get("SLACK_API_TOKEN")
 if not slack_token:
     sys.exit(0)
 
-attachment_text = "The DC/OS CLI for " + dcos_version + " has been set to " + tag_name + "!"
-s3_urls = ["https://{}/{}".format(bucket, a.format("dcos-" + dcos_version)) for a in artifacts]
+attachment_text = (
+    f"The DC/OS CLI for {dcos_version} has been set to {tag_name}!"
+)
+
+s3_urls = [
+    f'https://{bucket}/{a.format(f"dcos-{dcos_version}")}' for a in artifacts
+]
+
 
 try:
     resp = requests.post(
-      "https://mesosphere.slack.com/services/hooks/jenkins-ci?token=" + slack_token,
-      json={
-        "channel": "#dcos-cli-ci",
-        "color": "good",
-        "attachments": [
-            {
-                "color": "good",
-                "title": "dcos-cli",
-                "text":  "\n".join([attachment_text + " :dcos:"] + s3_urls),
-                "fallback": "[dcos-core-cli] " + attachment_text
-            }
-        ]
-      }, timeout=30)
+        f"https://mesosphere.slack.com/services/hooks/jenkins-ci?token={slack_token}",
+        json={
+            "channel": "#dcos-cli-ci",
+            "color": "good",
+            "attachments": [
+                {
+                    "color": "good",
+                    "title": "dcos-cli",
+                    "text": "\n".join([f"{attachment_text} :dcos:"] + s3_urls),
+                    "fallback": f"[dcos-core-cli] {attachment_text}",
+                }
+            ],
+        },
+        timeout=30,
+    )
+
 
     if resp.status_code != 200:
-        raise Exception("received {} status response: {}".format(resp.status_code, resp.text))
+        raise Exception(f"received {resp.status_code} status response: {resp.text}")
 except Exception as e:
-    print("Couldn't post Slack notification:\n  {}".format(e))
+    print(f"Couldn't post Slack notification:\n  {e}")

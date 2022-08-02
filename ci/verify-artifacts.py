@@ -43,37 +43,38 @@ for tag in dcos_cli_repo.get_tags():
 
 expectations = [
     (
-        "https://downloads.dcos.io/cli/releases/binaries/dcos/{}/x86-64/latest/dcos{}".format(platform, ext),
-        latest_overall
+        f"https://downloads.dcos.io/cli/releases/binaries/dcos/{platform}/x86-64/latest/dcos{ext}",
+        latest_overall,
     ),
     (
-        "https://downloads.dcos.io/binaries/cli/{}/x86-64/latest/dcos{}".format(platform, ext),
-        latest_overall
+        f"https://downloads.dcos.io/binaries/cli/{platform}/x86-64/latest/dcos{ext}",
+        latest_overall,
     ),
     (
-        "https://downloads.dcos.io/binaries/cli/{}/x86-64/dcos-1.13/dcos{}".format(platform, ext),
-        latest_0_8
+        f"https://downloads.dcos.io/binaries/cli/{platform}/x86-64/dcos-1.13/dcos{ext}",
+        latest_0_8,
     ),
     (
-        "https://downloads.dcos.io/binaries/cli/{}/x86-64/dcos-1.12/dcos{}".format(platform, ext),
-        latest_0_7
+        f"https://downloads.dcos.io/binaries/cli/{platform}/x86-64/dcos-1.12/dcos{ext}",
+        latest_0_7,
     ),
     (
-        "https://downloads.dcos.io/binaries/cli/{}/x86-64/dcos-1.11/dcos{}".format(platform, ext),
-        latest_0_6
+        f"https://downloads.dcos.io/binaries/cli/{platform}/x86-64/dcos-1.11/dcos{ext}",
+        latest_0_6,
     ),
     (
-        "https://downloads.dcos.io/binaries/cli/{}/x86-64/dcos-1.10/dcos{}".format(platform, ext),
-        latest_0_5
+        f"https://downloads.dcos.io/binaries/cli/{platform}/x86-64/dcos-1.10/dcos{ext}",
+        latest_0_5,
     ),
     (
-        "https://downloads.dcos.io/cli/testing/binaries/dcos/{}/x86-64/master/dcos{}".format(platform, ext),
-        latest_commit
-    )
+        f"https://downloads.dcos.io/cli/testing/binaries/dcos/{platform}/x86-64/master/dcos{ext}",
+        latest_commit,
+    ),
 ]
 
+
 for url, expected_version in expectations:
-    print('Verifying ' + url + '...')
+    print(f'Verifying {url}...')
     r = requests.get(url, stream=True)
     fd, binary = tempfile.mkstemp()
     try:
@@ -89,7 +90,10 @@ for url, expected_version in expectations:
         version.read_string('[version]\n' + output)
         actual_version = version.get('version', 'dcoscli.version')
 
-        assert actual_version == expected_version, 'expected {}, got {}'.format(expected_version, actual_version)
+        assert (
+            actual_version == expected_version
+        ), f'expected {expected_version}, got {actual_version}'
+
     finally:
         os.remove(binary)
 

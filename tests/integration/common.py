@@ -43,16 +43,16 @@ def exec_cmd(cmd, env=None, stdin=None, timeout=None):
         # https://docs.python.org/3.5/library/subprocess.html#subprocess.Popen.communicate
         process.kill()
         stdout, stderr = process.communicate()
-        print('STDOUT: {}'.format(stdout.decode('utf-8')))
-        print('STDERR: {}'.format(stderr.decode('utf-8')))
+        print(f"STDOUT: {stdout.decode('utf-8')}")
+        print(f"STDERR: {stderr.decode('utf-8')}")
         raise
 
     # This is needed to get rid of '\r' from Windows's lines endings.
     stdout, stderr = [stream.replace(b'\r', b'').decode('utf-8') for stream in streams]
 
     # We should always print the stdout and stderr
-    print('STDOUT: {}'.format(stdout))
-    print('STDERR: {}'.format(stderr))
+    print(f'STDOUT: {stdout}')
+    print(f'STDERR: {stderr}')
 
     return (process.returncode, stdout, stderr)
 
@@ -80,18 +80,15 @@ def setup_cluster(**kwargs):
 def _setup_cluster(name='DEFAULT', scheme='https', insecure=True, env={}):
     env = {**os.environ.copy(), **env}
     cluster = {
-        'variant': os.environ.get('DCOS_TEST_' + name + '_CLUSTER_VARIANT'),
-        'username': os.environ.get('DCOS_TEST_' + name + '_CLUSTER_USERNAME'),
-        'password': os.environ.get('DCOS_TEST_' + name + '_CLUSTER_PASSWORD'),
-        'name': 'test_cluster_' + str(uuid.uuid4()),
+        'variant': os.environ.get(f'DCOS_TEST_{name}_CLUSTER_VARIANT'),
+        'username': os.environ.get(f'DCOS_TEST_{name}_CLUSTER_USERNAME'),
+        'password': os.environ.get(f'DCOS_TEST_{name}_CLUSTER_PASSWORD'),
+        'name': f'test_cluster_{str(uuid.uuid4())}',
     }
 
-    cmd = 'dcos cluster setup --name={} --username={} --password={} {}://{}'.format(
-        cluster['name'],
-        cluster['username'],
-        cluster['password'],
-        scheme,
-        os.environ.get('DCOS_TEST_' + name + '_CLUSTER_HOST'))
+
+    cmd = f"dcos cluster setup --name={cluster['name']} --username={cluster['username']} --password={cluster['password']} {scheme}://{os.environ.get(f'DCOS_TEST_{name}_CLUSTER_HOST')}"
+
 
     if scheme == 'https':
         cmd += ' --no-check'

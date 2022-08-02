@@ -160,11 +160,11 @@ def test_cluster_setup_cosmos_plugins():
 
         if os.environ.get('DCOS_TEST_DEFAULT_CLUSTER_VARIANT') == 'open':
             assert len(plugins) == 1
-            assert plugins[0]['name'] == 'dcos-core-cli'
         else:
             assert len(plugins) == 2
-            assert plugins[0]['name'] == 'dcos-core-cli'
             assert plugins[1]['name'] == 'dcos-enterprise-cli'
+
+        assert plugins[0]['name'] == 'dcos-core-cli'
 
 
 def test_cluster_setup_framework_plugins():
@@ -180,14 +180,13 @@ def test_cluster_setup_framework_plugins():
 
         if os.environ.get('DCOS_TEST_DEFAULT_CLUSTER_VARIANT') == 'open':
             assert len(plugins) == 2
-            assert plugins[0]['name'] == 'dcos-core-cli'
             assert plugins[1]['name'] == 'hello-world'
         else:
             assert len(plugins) == 3
-            assert plugins[0]['name'] == 'dcos-core-cli'
             assert plugins[1]['name'] == 'dcos-enterprise-cli'
             assert plugins[2]['name'] == 'hello-world'
 
+        assert plugins[0]['name'] == 'dcos-core-cli'
         code, _, _ = exec_cmd(['dcos', 'package', 'uninstall', '--yes', 'hello-world'])
         assert code == 0
 
